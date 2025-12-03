@@ -18,7 +18,7 @@ pipeline {
 
      }
 
- stage ('Compile Stage') {
+ stage ('Build') {
 
  steps {
 
