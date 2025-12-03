@@ -1,33 +1,35 @@
 pipeline {
+    agent any
 
- agent any
+    environment {
+        DOCKER_HUB_CREDENTIALS = credentials('Dockerhub_pwd')
+    }
 
- tools {maven 'M2_HOME'}
+    stages {
+        stage('GIT') {
+            steps {
+                git branch: 'master', 
+                    url: 'https://github.com/hwafa/timesheetproject.git'
+            }
+        }
 
- stages {
+        stage('Maven Build') {
+            steps {
+                sh "mvn clean install -DskipTests"
+            }
+        }
 
- stage('GIT') {
+        stage('Docker Build') {
+            steps {
+                sh "docker build -t <dockerhub-username>/<repo>:v1 ."
+            }
+        }
 
-           steps {
-
-               git branch: 'master',
-
-               url: ' https://github.com/hwafa/timesheetproject.git'
-
-          }
-
-     }
-
- stage ('Build') {
-
- steps {
-
- sh 'mvn clean compile'
-
- }
-
- }
-
- }
-
+        stage('Docker Push') {
+            steps {
+                sh "echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u $DOCKER_HUB_CREDENTIALS_USR --password-stdin"
+                sh "docker push <dockerhub-username>/<repo>:v1"
+            }
+        }
+    }
 }
