@@ -1,4 +1,4 @@
-pipeline {
+ pipeline {
     agent any
 
     environment {
@@ -15,7 +15,7 @@ pipeline {
 
         stage('Maven Build') {
             steps {
-                sh "mvn clean install -DskipTests"
+                sh "mvn clean install -Dmaven.test.skip=true"
             }
         }
 
