@@ -22,6 +22,18 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    echo 'Running SonarQube Analysis...'
+                    // The name 'sonar-server' must match what you put in Manage Jenkins -> System
+                    withSonarQubeEnv('sonar-server') {
+                        sh 'mvn sonar:sonar -Dmaven.test.skip=true'
+                    }
+                }
+            }
+        }
+        
         stage('Docker Build') {
             steps {
                 // Build with the unique tag
